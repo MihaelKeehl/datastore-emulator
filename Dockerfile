@@ -5,11 +5,9 @@ ARG GCLOUD_SDK_VERSION=latest
 FROM google/cloud-sdk:$GCLOUD_SDK_VERSION
 MAINTAINER Juri
 
-# Install Java 8 for Datastore emulator
-RUN add-apt-repository ppa:openjdk-r/ppa &&\
-    apt-get -qqy update &&\
-    apt-get install -qqy openjdk8-jre &&\
-    gcloud components install cloud-datastore-emulator --quiet
+# Install Datastore emulator
+RUN apt-get -qqy update &&\
+    apt-get install -qqy google-cloud-sdk-datastore-emulator
 
 # Volume to persist Datastore data
 VOLUME /data
