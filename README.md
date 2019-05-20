@@ -1,57 +1,52 @@
 # Google Cloud Datastore Emulator
 
-A [Google Cloud Datastore Emulator](https://cloud.google.com/datastore/docs/tools/datastore-emulator/) container image. The image is meant to be used for creating an standalone emulator for testing.
+[Google Cloud Datastore Emulator](https://cloud.google.com/datastore/docs/tools/datastore-emulator/) unofficial container image for testing.
 
-## Environment
+## Environment variables
 
-The following environment variables must be set:
+Please set:
 
-- `DATASTORE_LISTEN_ADDRESS`: The address should refer to a listen address, meaning that `0.0.0.0` can be used. The address must use the syntax `HOST:PORT`, for example `0.0.0.0:8081`. The container must expose the port used by the Datastore emulator.
 - `DATASTORE_PROJECT_ID`: The ID of the Google Cloud project for the emulator.
 
-## Connect application with the emulator
+Optionally, set the address to listen on:
 
-The following environment variables need to be set so your application connects to the emulator instead of the production Cloud Datastore environment:
+- `DATASTORE_LISTEN_ADDRESS`: defaults to `0.0.0.0:8081`. Datastore default port is 8081
+
+## Application variables
+
+Please set these variables in the application to connect to emulator:
 
 - `DATASTORE_EMULATOR_HOST`: The listen address used by the emulator.
 - `DATASTORE_PROJECT_ID`: The ID of the Google Cloud project used by the emulator.
 
-## Custom commands
+[Running the Datastore mode Emulator](https://cloud.google.com/datastore/docs/tools/datastore-emulator)
 
-This image contains a script named `start-datastore` (included in the PATH). This script is used to initialize the Datastore emulator.
+### Emulator options
 
-### Starting an emulator
+These options are supported: `--no-store-on-disk` and `--consistency`.
+[Datastore Emulator Start](https://cloud.google.com/sdk/gcloud/reference/beta/emulators/datastore/start).
 
-By default, the following command is called:
+The image has a volume mounted at `/data` by default.
 
-```sh
-datastore-init.sh
-```
-### Starting an emulator with options
 
-This image comes with the following options: `--no-store-on-disk` and `--consistency`. Check [Datastore Emulator Start](https://cloud.google.com/sdk/gcloud/reference/beta/emulators/datastore/start). `--legacy`, `--data-dir` and `--host-port` are not supported by this image.
+## Creating a Datastore emulator
 
-```sh
-datastore-init.sh --no-store-on-disk --consistency=1.0
-```
-
-## Creating a Datastore emulator with Docker Compose
-
-The easiest way to create an emulator with this image is by using [Docker Compose](https://docs.docker.com/compose). The following snippet can be used as a `docker-compose.yml` for a datastore emulator:
+[Docker Compose](https://docs.docker.com/compose).
 
 ```YAML
 version: "2"
 
 services:
   datastore:
-    image: MihaelKeehl/datastore-emulator
+    image: MihaelKeehl/datastore-emulator:latest
     environment:
       - DATASTORE_PROJECT_ID=project-test
-      - DATASTORE_LISTEN_ADDRESS=0.0.0.0:8081
     ports:
       - "8081:8081"
 ```
 
-### Persistence
+K8s:
 
-The image has a volume mounted at `/data`. To maintain states between restarts, mount a volume at this location.
+kubectl run datastore-emulator --image=singularities/datastore-emulator:latest --restart=Always --env=DATASTORE_PROJECT_ID=${DATASTORE_PROJECT_ID} --port=8081
+kubectl expose deployment datastore-emulator --port 8081 --target-port 8081 --name datastore-emulator --type ClusterIP
+kubectl wait --for=condition=Ready pod -l run=datastore-emulator --timeout 1m
