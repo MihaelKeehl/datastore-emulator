@@ -28,9 +28,12 @@ RUN apt-get -qqy update && apt-get install -qqy \
     gcloud config set metrics/environment github_docker_image && \
     gcloud --version && \
     docker --version
+
 VOLUME ["/data"]
 
 COPY datastore-init.sh .
+
+RUN chmod 755 ./datastore-init.sh
 
 EXPOSE 8081
 
