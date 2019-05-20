@@ -6,10 +6,7 @@ if [[ -z "${DATASTORE_PROJECT_ID}" ]]; then
   exit 1
 fi
 
-if [[ -z "${DATASTORE_LISTEN_ADDRESS}" ]]; then
-  echo "Missing DATASTORE_LISTEN_ADDRESS environment variable" >&2
-  exit 1
-fi
+DATASTORE_LISTEN_ADDRESS="${DATASTORE_LISTEN_ADDRESS:-0.0.0.0:8081}"
 
 options=${options:1}
 # Check for datastore options
