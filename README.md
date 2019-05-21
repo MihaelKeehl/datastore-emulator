@@ -42,7 +42,7 @@ version: "2"
 
 services:
   datastore:
-    image: MihaelKeehl/datastore-emulator:latest
+    image: jurik/datastore-emulator:latest
     environment:
       - DATASTORE_PROJECT_ID=project-test
     ports:
@@ -51,6 +51,6 @@ services:
 
 K8s:
 
-```kubectl run datastore-emulator --image=singularities/datastore-emulator:latest --restart=Always --env=DATASTORE_PROJECT_ID=${DATASTORE_PROJECT_ID} --port=8081
+```kubectl run datastore-emulator --image=jurik/datastore-emulator:latest --restart=Always --env=DATASTORE_PROJECT_ID=${DATASTORE_PROJECT_ID} --port=8081
 kubectl expose deployment datastore-emulator --port 8081 --target-port 8081 --name datastore-emulator --type ClusterIP
 kubectl wait --for=condition=Ready pod -l run=datastore-emulator --timeout 1m```
